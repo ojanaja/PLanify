@@ -1,67 +1,68 @@
-'use client'
+"use client";
 
-import { copyList } from "@/actions/copy-list"
-import { deleteList } from "@/actions/delete-list"
-import { FormSubmit } from "@/components/form/form-submit"
-import { Button } from "@/components/ui/button"
+import { toast } from "sonner";
+import { List } from "@prisma/client";
+import { ElementRef, useRef } from "react";
+import { MoreHorizontal, X } from "lucide-react";
+
 import {
     Popover,
-    PopoverClose,
     PopoverContent,
-    PopoverTrigger
-} from "@/components/ui/popover"
-import { Separator } from "@/components/ui/separator"
-import { useAction } from "@/hooks/use-action"
-import { List } from "@prisma/client"
-import { MoreHorizontal, X } from "lucide-react"
-import { ElementRef, useRef } from "react"
-import { toast } from "sonner"
-
+    PopoverTrigger,
+    PopoverClose
+} from "@/components/ui/popover";
+import { useAction } from "@/hooks/use-action";
+import { Button } from "@/components/ui/button";
+import { copyList } from "@/actions/copy-list";
+import { deleteList } from "@/actions/delete-list";
+import { FormSubmit } from "@/components/form/form-submit";
+import { Separator } from "@/components/ui/separator";
 
 interface ListOptionsProps {
-    data: List
-    onAddCard: () => void
-}
+    data: List;
+    onAddCard: () => void;
+};
 
 export const ListOptions = ({
     data,
-    onAddCard
+    onAddCard,
 }: ListOptionsProps) => {
-    const closeRef = useRef<ElementRef<"button">>(null)
+    const closeRef = useRef<ElementRef<"button">>(null);
 
     const { execute: executeDelete } = useAction(deleteList, {
         onSuccess: (data) => {
-            toast.success(`List "${data.title}" deleted`)
-            closeRef.current?.click()
+            toast.success(`List "${data.title}" deleted`);
+            closeRef.current?.click();
         },
         onError: (error) => {
-            toast.error(error)
+            toast.error(error);
         }
-    })
+    });
 
     const { execute: executeCopy } = useAction(copyList, {
         onSuccess: (data) => {
-            toast.success(`List "${data.title}" copied`)
-            closeRef.current?.click()
+            toast.success(`List "${data.title}" copied`);
+            closeRef.current?.click();
         },
         onError: (error) => {
-            toast.error(error)
+            toast.error(error);
         }
-    })
+    });
 
-    const onDelete = (formdata: FormData) => {
-        const id = formdata.get("id") as string
-        const boardId = formdata.get("boardId") as string
+    const onDelete = (formData: FormData) => {
+        const id = formData.get("id") as string;
+        const boardId = formData.get("boardId") as string;
 
-        executeDelete({ id, boardId })
-    }
+        executeDelete({ id, boardId });
+    };
 
-    const onCopy = (formdata: FormData) => {
-        const id = formdata.get("id") as string
-        const boardId = formdata.get("boardId") as string
+    const onCopy = (formData: FormData) => {
+        const id = formData.get("id") as string;
+        const boardId = formData.get("boardId") as string;
 
-        executeCopy({ id, boardId })
-    }
+        executeCopy({ id, boardId });
+    };
+
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -69,12 +70,12 @@ export const ListOptions = ({
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="px-0 pt-4 pb-4" side="bottom" align="start">
-                <div className="text-sm font-medium text-center text-neutral-600 pb-2">
-                    List Actions
+            <PopoverContent className="px-0 pt-3 pb-3" side="bottom" align="start">
+                <div className="text-sm font-medium text-center text-neutral-600 pb-4">
+                    List actions
                 </div>
                 <PopoverClose ref={closeRef} asChild>
-                    <Button className="h-auto w-auto p-1.5 absolute top-2 right-2">
+                    <Button className="h-auto w-auto p-2 absolute top-2 right-2 text-neutral-600" variant="ghost">
                         <X className="h-4 w-4" />
                     </Button>
                 </PopoverClose>
@@ -83,7 +84,7 @@ export const ListOptions = ({
                     className="rounded-none w-full h-auto p-2 px-5 justify-start font-normal text-sm"
                     variant="ghost"
                 >
-                    Add Card
+                    Add card...
                 </Button>
                 <form action={onCopy}>
                     <input hidden name="id" id="id" value={data.id} />
@@ -92,7 +93,7 @@ export const ListOptions = ({
                         variant="ghost"
                         className="rounded-none w-full h-auto p-2 px-5 justify-start font-normal text-sm"
                     >
-                        Copy List
+                        Copy list...
                     </FormSubmit>
                 </form>
                 <Separator />
@@ -105,10 +106,10 @@ export const ListOptions = ({
                         variant="ghost"
                         className="rounded-none w-full h-auto p-2 px-5 justify-start font-normal text-sm"
                     >
-                        Delete List
+                        Delete this list
                     </FormSubmit>
                 </form>
             </PopoverContent>
         </Popover>
-    )
-}
+    );
+};
